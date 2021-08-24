@@ -6,20 +6,31 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
+    protected $primaryKey = 'pkiduser';
     protected $fillable = [
         'name',
+        'lastname',
+        'phone_number',
+        'identification_number',
         'email',
         'password',
+        'image',
+        'active',
+        'deleted',
+        'fkidcountry',
+        'remember_token',
     ];
 
     /**
@@ -40,4 +51,28 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    public static function filter($filters)
+    {
+        $query = User::query();
+        foreach ($filters as $filter) {
+            $query->where($filter->field,$filter->comparator,$filter->value);
+        }
+        
+        return $query;
+    }
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'fkidcountry');
+    }
 }

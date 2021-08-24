@@ -1,0 +1,10 @@
+{
+   "name":"Juan Diego",
+   "latname":"Benavides",
+   "phone_number":"3185579866",
+   "identification_number":"32132146",
+   "active":true,
+   "deleted":false,
+   "email":"juan@gmail.com",
+   "password":"asdf"
+}
